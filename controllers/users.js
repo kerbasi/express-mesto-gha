@@ -11,7 +11,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.findAllUsers = (res) => {
+module.exports.findAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ ...users }))
     .catch(() => res.status(500).send({ message: "Произошла ошибка на сервере" }));
