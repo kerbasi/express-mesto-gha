@@ -7,8 +7,10 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === "ValidationError")
-        return res.status(400).send({ message: `Произошла ошибка: ${err}` });
-      return res.status(500).send({ message: `Произошла ошибка: ${err}` });
+        return res
+          .status(400)
+          .send({ message: "Произошла ошибка, введенные данные не верны" });
+      return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };
 
@@ -16,7 +18,7 @@ module.exports.findAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ ...users }))
     .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка: ${err}` })
+      res.status(500).send({ message: "Произошла ошибка на сервере" })
     );
 };
 
@@ -31,10 +33,11 @@ module.exports.findUser = (req, res) => {
       })
     )
     .catch((err) => {
-      console.log(err.name);
       if (err.name === "CastError")
-        return res.status(404).send({ message: `Произошла ошибка: ${err}` });
-      return res.status(500).send({ message: `Произошла ошибка: ${err}` });
+        return res
+          .status(404)
+          .send({ message: "Запрашиваемый пользователь не найден" });
+      return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };
 
@@ -60,7 +63,9 @@ module.exports.updateUser = (req, res) => {
     )
     .catch((err) => {
       if (err.name === "ValidationError")
-        return res.status(400).send({ message: `Произошла ошибка: ${err}` });
-      return res.status(500).send({ message: `Произошла ошибка: ${err}` });
+        return res
+          .status(400)
+          .send({ message: "Произошла ошибка, введенные данные не верны" });
+      return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };
