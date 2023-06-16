@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 
 const app = express();
 const mongoose = require("mongoose");
@@ -12,7 +12,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/mestodb", {
   // useFindAndModify: false,
 });
 
-app.use((req, res, next) => {
+app.use((req, next) => {
   req.user = {
     _id: "648c8342e717e3816e058be9", // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
@@ -27,6 +27,4 @@ app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
 
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
-  console.log(`App listening on port ${PORT}`);
 });
