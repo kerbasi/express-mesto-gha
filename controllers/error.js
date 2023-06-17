@@ -1,5 +1,7 @@
+const NO_FIND_ERROR_CODE = 404;
+
 const error = (req, res) => {
-  res.status(404).send({ message: "Неправильный путь" });
+  res.status(NO_FIND_ERROR_CODE).send({ message: 'Неправильный путь' });
 };
 
 module.exports = error;
