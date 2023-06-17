@@ -32,7 +32,11 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   ).then((card) => res.send(card))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка на сервере" }));
+    .catch((err) => {
+      if (err.name === "CastError") return res.status(400).send({ message: "Некоректно задан id" });
+      if (err.name === "TypeError") return res.status(404).send({ message: "Запрашиваемая карточка не найдена" });
+      return res.status(500).send({ message: "Произошла ошибка на сервере" });
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
@@ -41,5 +45,9 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   ).then((card) => res.send(card))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка на сервере" }));
+    .catch((err) => {
+      if (err.name === "CastError") return res.status(400).send({ message: "Некоректно задан id" });
+      if (err.name === "TypeError") return res.status(404).send({ message: "Запрашиваемая карточка не найдена" });
+      return res.status(500).send({ message: "Произошла ошибка на сервере" });
+    });
 };
