@@ -1,5 +1,6 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const app = express();
 const mongoose = require('mongoose');
@@ -17,6 +18,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 });
 
 app.use(limiter);
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.user = {
