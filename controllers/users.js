@@ -6,7 +6,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные не верны" });
+      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные неверны" });
       return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };
@@ -26,7 +26,6 @@ module.exports.findUser = (req, res) => {
       _id: user._id,
     }))
     .catch((err) => {
-      console.log(err.name);
       if (err.name === "CastError") return res.status(400).send({ message: "Некоректно задан id" });
       if (err.name === "TypeError") return res.status(404).send({ message: "Запрашиваемый пользователь не найден" });
       return res.status(500).send({ message: "Произошла ошибка на сервере" });
@@ -52,7 +51,30 @@ module.exports.updateUser = (req, res) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные не верны" });
+      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные неверны" });
+      return res.status(500).send({ message: "Произошла ошибка на сервере" });
+    });
+};
+
+module.exports.updateUserAvatar = (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      avatar: req.body.avatar,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+    }))
+    .catch((err) => {
+      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные неверны" });
       return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };

@@ -6,7 +6,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные не верны" });
+      if (err.name === "ValidationError") return res.status(400).send({ message: "Произошла ошибка, введенные данные неверны" });
       return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };
