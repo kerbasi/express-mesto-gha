@@ -20,6 +20,7 @@ app.use(express.json());
 
 app.use("/users", require("./routes/users"));
 app.use("/cards", require("./routes/cards"));
+app.all("/*", require("./controllers/error"));
 
 app.listen(PORT, () => {
 });
