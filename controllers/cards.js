@@ -19,9 +19,9 @@ module.exports.findAllCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then(() => res.send("card deleted"))
+    .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === "CastError") return res.status(404).send({ message: "Запрашиваемый пользователь не найден" });
+      if (err.name === "CastError") return res.status(404).send({ message: "Запрашиваемая карточка не найдена" });
       return res.status(500).send({ message: "Произошла ошибка на сервере" });
     });
 };
@@ -31,7 +31,7 @@ module.exports.likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
-  ).then(() => res.send("card liked"))
+  ).then((card) => res.send(card))
     .catch(() => res.status(500).send({ message: "Произошла ошибка на сервере" }));
 };
 
@@ -40,6 +40,6 @@ module.exports.dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
-  ).then(() => res.send("card unliked"))
+  ).then((card) => res.send(card))
     .catch(() => res.status(500).send({ message: "Произошла ошибка на сервере" }));
 };
