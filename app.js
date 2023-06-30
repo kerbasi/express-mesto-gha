@@ -38,6 +38,7 @@ app.use(express.json());
 app.post('/signin', createUser);
 app.post('/signup', login);
 app.use('/cards', auth, require('./routes/cards'));
+app.use('/users', auth, require('./routes/users'));
 app.all('/*', auth, require('./controllers/error'));
 
 app.listen(PORT, () => {

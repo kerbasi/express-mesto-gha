@@ -46,6 +46,25 @@ module.exports.findUser = (req, res) => {
     });
 };
 
+module.exports.findMe = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user) {
+        return res.send({
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          _id: user._id,
+        });
+      }
+      return res.status(NO_FIND_ERROR_CODE).send({ message: 'Запрашиваемая карточка не найдена' });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') return res.status(VALIDATION_ERROR_CODE).send({ message: 'Некоректно задан id' });
+      return res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка на сервере' });
+    });
+};
+
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
