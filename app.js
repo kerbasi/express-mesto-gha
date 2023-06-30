@@ -27,8 +27,8 @@ app.use(limiter);
 app.use(helmet());
 
 app.use(express.json());
-app.post('/signin', createUser);
-app.post('/signup', login);
+app.post('/signin', login);
+app.post('/signup', createUser);
 app.use('/cards', auth, require('./routes/cards'));
 app.use('/users', auth, require('./routes/users'));
 app.all('/*', auth, require('./controllers/error'));
