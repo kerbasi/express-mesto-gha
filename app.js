@@ -7,8 +7,9 @@ const mongoose = require('mongoose');
 
 const {
   createUser,
-  login
+  login,
 } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -25,19 +26,19 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 app.use(limiter);
 app.use(helmet());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '648c8342e717e3816e058be9', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '648c8342e717e3816e058be9', // вставьте сюда _id созданного в предыдущем пункте пользователя
+//   };
 
-  next();
-});
+//   next();
+// });
 
 app.use(express.json());
 app.post('/signin', createUser);
 app.post('/signup', login);
-app.use('/cards', require('./routes/cards'));
-app.all('/*', require('./controllers/error'));
+app.use('/cards', auth, require('./routes/cards'));
+app.all('/*', auth, require('./controllers/error'));
 
 app.listen(PORT, () => {
 });
