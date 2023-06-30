@@ -5,6 +5,11 @@ const helmet = require('helmet');
 const app = express();
 const mongoose = require('mongoose');
 
+const {
+  createUser,
+  login
+} = require('./controllers/users');
+
 const { PORT = 3000 } = process.env;
 
 const limiter = rateLimit({
@@ -29,8 +34,8 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.post('/signin', require('./routes/users'));
-app.post('/signup', require('./routes/users'));
+app.post('/signin', createUser);
+app.post('/signup', login);
 app.use('/cards', require('./routes/cards'));
 app.all('/*', require('./controllers/error'));
 
