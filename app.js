@@ -40,9 +40,9 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().required().min(2),
+    avatar: Joi.string().required().regex(/(https:\/\/|http:\/\/){1}[a-zA-Z.\-_~:/?#[\]@!$&'()*+,;=]+/),
     email: Joi.string().required().email(),
-    password: Joi.string().regex(/(https:\/\/|http:\/\/){1}[a-zA-Z.\-_~:/?#[\]@!$&'()*+,;=]+/),
+    password: Joi.string().min(8),
   }),
 }), createUser);
 app.use('/cards', auth, require('./routes/cards'));
