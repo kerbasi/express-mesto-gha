@@ -6,7 +6,7 @@ const { celebrate, Joi } = require('celebrate');
 const app = express();
 const mongoose = require('mongoose');
 
-// const { errors } = require('celebrate');
+const { errors } = require('celebrate');
 
 const {
   createUser,
@@ -48,6 +48,8 @@ app.post('/signup', celebrate({
 app.use('/cards', auth, require('./routes/cards'));
 app.use('/users', auth, require('./routes/users'));
 app.all('/*', auth, require('./controllers/error'));
+
+app.use(errors());
 
 app.listen(PORT, () => {
 });
