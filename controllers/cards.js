@@ -26,7 +26,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card) {
-        if (card.owner._id === req.user._id) {
+        if (card.owner.toString() === req.user._id) {
           return Card.deleteOne(card).then(() => res.send(card));
         }
         return res.status(PERMISSION_DENIED).send({ message: 'Это не ваша карточка' });
