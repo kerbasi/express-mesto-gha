@@ -1,9 +1,12 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const { celebrate, Joi } = require('celebrate');
 
 const app = express();
 const mongoose = require('mongoose');
+
+// const { errors } = require('celebrate');
 
 const {
   createUser,
@@ -27,8 +30,21 @@ app.use(limiter);
 app.use(helmet());
 
 app.use(express.json());
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().required().min(2),
+    email: Joi.string().required().email(),
+    password: Joi.string().regex(/(https:\/\/|http:\/\/){1}[a-zA-Z.\-_~:/?#[\]@!$&'()*+,;=]+/),
+  }),
+}), createUser);
 app.use('/cards', auth, require('./routes/cards'));
 app.use('/users', auth, require('./routes/users'));
 app.all('/*', auth, require('./controllers/error'));
