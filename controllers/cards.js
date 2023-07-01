@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 
 const VALIDATION_ERROR_CODE = 400;
+const PERMISSION_DENIED = 403;
 const NO_FIND_ERROR_CODE = 404;
 const SERVER_ERROR_CODE = 500;
 
@@ -22,12 +23,16 @@ module.exports.findAllCards = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
-      if (card) return res.send(card);
+      if (card) {
+        if (card.owner._id === req.user._id) {
+          return Card.deleteOne(card).then(() => res.send(card));
+        }
+        return res.status(PERMISSION_DENIED).send({ message: 'Это не ваша карточка' });
+      }
       return res.status(NO_FIND_ERROR_CODE).send({ message: 'Запрашиваемая карточка не найдена' });
-    })
-    .catch((err) => {
+    }).catch((err) => {
       if (err.name === 'CastError') return res.status(VALIDATION_ERROR_CODE).send({ message: 'Некоректно задан id' });
       return res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка на сервере' });
     });
