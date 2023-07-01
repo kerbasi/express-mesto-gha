@@ -11,17 +11,30 @@ const {
 
 router.get('/', findAllUsers);
 
-router.get('/me', findMe);
+router.get('/me', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), findMe);
 
 router.get('/:userId', celebrate({
-  // валидируем параметры
   params: Joi.object().keys({
     userId: Joi.string().alphanum().length(24),
   }),
 }), findUser);
 
-router.patch('/me', updateUser);
+router.patch('/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+}), updateUser);
 
-router.patch('/me/avatar', updateUserAvatar);
+router.patch('/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().regex(/(https:\/\/|http:\/\/){1}[a-zA-Z.\-_~:/?#[\]@!$&'()*+,;=]+/),
+  }),
+}), updateUserAvatar);
 
 module.exports = router;
