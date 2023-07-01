@@ -14,7 +14,13 @@ module.exports.createUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send({
+      email: user.email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      _id: user._id,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') return res.status(VALIDATION_ERROR_CODE).send({ message: 'Произошла ошибка, введенные данные неверны' });
       return res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка на сервере' });
@@ -32,6 +38,7 @@ module.exports.findUser = (req, res) => {
     .then((user) => {
       if (user) {
         return res.send({
+          email: user.email,
           name: user.name,
           about: user.about,
           avatar: user.avatar,
