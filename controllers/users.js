@@ -22,9 +22,9 @@ module.exports.createUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.code === 11000) return next(new DuplicateError('Уже есть пользователь с данным email'));
-      if (err.name === 'ValidationError') return next(new ValidationError('Произошла ошибка, введенные данные неверны'));
-      return next(err);
+      if (err.code === 11000) next(new DuplicateError('Уже есть пользователь с данным email'));
+      if (err.name === 'ValidationError') next(new ValidationError('Произошла ошибка, введенные данные неверны'));
+      next(err);
     });
 };
 

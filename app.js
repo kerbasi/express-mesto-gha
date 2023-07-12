@@ -45,14 +45,21 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
   }),
 }), createUser);
+
 app.use('/cards', auth, require('./routes/cards'));
 app.use('/users', auth, require('./routes/users'));
 app.all('/*', auth, require('./controllers/error'));
 
 app.use(errors());
 
-app.use((err, res) => {
-  res.status(err.statusCode).send({ message: err.message });
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({
+    message: statusCode === 500
+      ? 'На сервере произошла ошибка'
+      : message,
+  });
+  next();
 });
 
 app.listen(PORT, () => {
