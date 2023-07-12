@@ -1,6 +1,6 @@
 const NotFoundError = require('../errors/not-found-error');
 
-const error = (next) => {
+const error = (req, res, next) => {
   next(new NotFoundError('Неправильный путь'));
 };
 
