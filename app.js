@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { celebrate, Joi } = require('celebrate');
