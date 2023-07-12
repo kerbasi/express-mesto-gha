@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { celebrate, Joi } = require('celebrate');
@@ -50,6 +50,10 @@ app.use('/users', auth, require('./routes/users'));
 app.all('/*', auth, require('./controllers/error'));
 
 app.use(errors());
+
+app.use((err, res) => {
+  res.status(err.statusCode).send({ message: err.message });
+});
 
 app.listen(PORT, () => {
 });

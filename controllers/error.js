@@ -1,7 +1,7 @@
-const NO_FIND_ERROR_CODE = 404;
+const NotFoundError = require('../errors/not-found-error');
 
-const error = (req, res) => {
-  res.status(NO_FIND_ERROR_CODE).send({ message: 'Неправильный путь' });
+const error = (next) => {
+  next(new NotFoundError('Неправильный путь'));
 };
 
 module.exports = error;
