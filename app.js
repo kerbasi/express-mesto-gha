@@ -1,14 +1,15 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate } = require('celebrate');
 
 const app = express();
 const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
 
-const { regExpLink } = require('./utils/regExpConstants');
+const { celebrateValidationSignin, celebrateValidationSignup } = require('./middlewares/celebrateValidation');
+const errorHandler = require('./middlewares/error-handler');
 
 const {
   createUser,
@@ -16,7 +17,7 @@ const {
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -25,28 +26,15 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
+mongoose.connect(DB_URL, {
 });
 
 app.use(limiter);
 app.use(helmet());
 
 app.use(express.json());
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), login);
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(regExpLink),
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), createUser);
+app.post('/signin', celebrate(celebrateValidationSignin), login);
+app.post('/signup', celebrate(celebrateValidationSignup), createUser);
 
 app.use('/cards', auth, require('./routes/cards'));
 app.use('/users', auth, require('./routes/users'));
@@ -54,15 +42,7 @@ app.all('/*', auth, require('./controllers/error'));
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500
-      ? 'На сервере произошла ошибка'
-      : message,
-  });
-  next();
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
 });
