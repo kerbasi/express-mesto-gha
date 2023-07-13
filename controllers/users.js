@@ -6,6 +6,8 @@ const ValidationError = require('../errors/validation-error');
 const TokenError = require('../errors/token-error');
 const DuplicateError = require('../errors/duplicate-error');
 
+const SUCCESS_CREATE_CODE = 201;
+
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
@@ -14,7 +16,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send({
+    .then((user) => res.status(SUCCESS_CREATE_CODE).send({
       email: user.email,
       name: user.name,
       about: user.about,
@@ -22,9 +24,9 @@ module.exports.createUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.code === 11000) next(new DuplicateError('Уже есть пользователь с данным email'));
-      if (err.name === 'ValidationError') next(new ValidationError('Произошла ошибка, введенные данные неверны'));
-      next(err);
+      if (err.code === 11000) return next(new DuplicateError('Уже есть пользователь с данным email'));
+      if (err.name === 'ValidationError') return next(new ValidationError('Произошла ошибка, введенные данные неверны'));
+      return next(err);
     });
 };
 
