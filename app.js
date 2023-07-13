@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
 
+const { regExpLink } = require('./utils/regExpConstants');
+
 const {
   createUser,
   login,
@@ -40,7 +42,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/(https:\/\/|http:\/\/){1}[a-zA-Z.\-_~:/?#[\]@!$&'()*+,;=]+/),
+    avatar: Joi.string().regex(regExpLink),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
